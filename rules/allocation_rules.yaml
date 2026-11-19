@@ -1,0 +1,35 @@
+# SetuHaul allocation rules. Ops can read and change these without touching code.
+# Hard constraints: if any fails, the option is NEVER offered.
+# Soft objectives: only rank options that already passed every hard constraint.
+facility: FAC-JAI-01
+hard_constraints:
+  dock_serviceable: true            # BREAKDOWN / MAINTENANCE / MANUAL_BLOCK overlap => unserviceable
+  unserviceable_event_types: [BREAKDOWN, MAINTENANCE, MANUAL_BLOCK]
+  capacity_reduction_blocks: false  # CAPACITY_REDUCTION => allowed but flagged (open question, logged)
+  dock_type_match: true             # REEFER -> REEFER dock (RULE003); > heavy_threshold -> HEAVY (RULE004)
+  heavy_threshold_kg: 25000         # RULE004
+  weight_within_dock_limit: true    # load_weight_kg <= docks.max_vehicle_weight_kg
+  start_not_before_eta: true
+  start_after_now: true
+  unload_fits_contiguous_time: true # may join 2 back-to-back free slots on the same dock
+  max_slots_per_option: 2
+  last_new_start: "21:00"           # RULE005: a start at exactly 21:00 is allowed; later needs a human
+  facility_close: "22:00"           # unload must end by close
+  gate_out_buffer_min: 15           # ASSUMPTION: paperwork + exit after unload when driver gives a gate-out time
+  labour_crews_per_hour: 4          # SYNTHETIC: not in dataset, not enforced in the MVP
+soft_objectives:                    # rank options for one truck / trucks competing for capacity
+  priority_weight: {CRITICAL: 100, HIGH: 60, NORMAL: 30, LOW: 10}
+  minutes_late_weight: 0.5          # latest ETA minus original ETA
+  already_in_yard_bonus: 20
+  schedule_change_penalty: 15
+  eta_confidence_penalty: {LOW: 10, MEDIUM: 3, HIGH: 0}
+  waiting_minutes_weight: 0.2       # slot_start - ETA (less waiting ranks higher)
+  two_slot_penalty: 5               # prefer not to consume two slots when one would do
+  flagged_dock_penalty: 10          # e.g. capacity reduction overlap
+tie_break: earliest_start_then_dock
+human_approval_triggers:
+  - start_after_last_new_start
+  - no_feasible_option
+  - bump_confirmed_truck
+  - contradictory_data
+  - safety_or_emergency_keywords

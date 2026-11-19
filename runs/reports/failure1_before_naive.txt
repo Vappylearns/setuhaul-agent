@@ -1,0 +1,2 @@
+# Staged failure 1: naive read-then-write (no lock, no unique index). The test PASSES when it proves >1 winner (10/10 in our runs).
+1 passed, 22 deselected in 0.23s

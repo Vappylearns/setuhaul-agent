@@ -1,0 +1,7 @@
+# Core (pinned to what the MVP was tested with on 19 Nov 2026)
+pydantic==2.14.3
+PyYAML==6.0.3
+openai==3.55.1          # only used in LLM mode (OpenRouter is OpenAI-compatible)
+python-dotenv==1.2.4
+rich==15.0.0
+pytest==9.2.0

@@ -1,0 +1,2 @@
+# Real booking service: 10 threads race for SLOT-JAI-020, repeated 20 times. Exactly 1 winner each time, invariant 0.
+20 passed, 3 deselected in 4.70s

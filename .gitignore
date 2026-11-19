@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+data/working.db*
+runs/traces/
+runs/outbox.jsonl
+
+# Course dataset is FDE Academy material; not published
+data/*.db
